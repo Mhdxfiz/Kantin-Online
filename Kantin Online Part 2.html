@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistem Kantin Online UMSU</title>
+<style>
+:root{
+  --primary:#0ea5a4;
+  --secondary:#0f172a;
+  --bg:#f8fafc;
+  --card:#ffffff;
+  --text:#1e293b;
+  --muted:#64748b;
+}
+*{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','San Francisco','Helvetica Neue',Arial,sans-serif;margin:0;background:var(--bg);color:var(--text)}
+
+header{
+  background:linear-gradient(135deg,#0ea5a4,#22d3ee);
+  color:#fff;
+  padding:16px 32px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-radius:0 0 24px 24px;
+  box-shadow:0 10px 30px rgba(0,0,0,.15)
+}
+.brand{display:flex;align-items:center;gap:14px}
+.brand img{width:54px;height:54px;border-radius:50%;background:#fff;padding:6px}
+.brand h1{font-size:20px;margin:0}
+.brand span{font-size:13px;opacity:.9}
+
+.nav button{
+  background:rgba(255,255,255,.25);
+  border:none;color:#fff;
+  padding:10px 14px;
+  border-radius:12px;
+  font-weight:600;
+  cursor:pointer;
+  margin-left:6px
+}
+
+.hidden{display:none}
+.container{padding:32px;max-width:1200px;margin:auto}
+
+.card{
+  background:var(--card);
+  padding:22px;
+  border-radius:20px;
+  box-shadow:0 12px 30px rgba(0,0,0,.1)
+}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px}
+.card img{width:100%;height:280px;object-fit:cover;border-radius:14px;margin-bottom:12px}
+
+button.primary{
+  width:100%;
+  padding:10px;
+  background:var(--primary);
+  color:white;
+  border:none;
+  border-radius:12px;
+  font-weight:600;
+  cursor:pointer
+}
+
+.auth-wrapper{min-height:calc(100vh - 120px);display:flex;align-items:center;justify-content:center}
+.auth-card{
+  width:360px;
+  background:white;
+  padding:30px;
+  border-radius:24px;
+  box-shadow:0 25px 50px rgba(0,0,0,.15);
+  text-align:center
+}
+.auth-card input{
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  border:1.5px solid #e2e8f0;
+  margin-bottom:12px
+}
+
+.section-title{font-size:22px;margin-bottom:14px}
+footer{text-align:center;padding:20px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <img src="./images/umsu.png" alt="Logo UMSU">
+    <div>
+      <h1>Kantin Online UMSU</h1>
+      <span>Universitas Muhammadiyah Sumatera Utara</span>
+    </div>
+  </div>
+  <div class="nav hidden" id="nav">
+    <button onclick="show('dashboard')">Dashboard</button>
+    <button onclick="show('kantin')">Kantin</button>
+    <button onclick="show('riwayat')">Riwayat</button>
+    <button onclick="location.reload()">Logout</button>
+  </div>
+</header>
+
+<!-- LOGIN & REGISTER -->
+<div class="auth-wrapper" id="login">
+  <div class="auth-card" id="loginBox">
+    <h2>Login Mahasiswa</h2>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:16px">Demo sistem kantin UMSU</p>
+    <input id="npm" placeholder="NPM">
+    <input type="password" placeholder="Password">
+    <button class="primary" onclick="login()">Masuk</button>
+    <p style="margin-top:14px;font-size:14px">Belum punya akun? <span style="color:var(--primary);cursor:pointer;font-weight:600" onclick="toggleAuth()">Daftar</span></p>
+  </div>
+
+  <div class="auth-card hidden" id="registerBox">
+    <h2>Daftar Akun</h2>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:16px">Form pendaftaran mahasiswa</p>
+    <input placeholder="Nama Lengkap">
+    <input placeholder="NPM">
+    <input type="email" placeholder="Email">
+    <input type="password" placeholder="Password">
+    <input type="password" placeholder="Ketik Ulang Password">
+    <button class="primary" onclick="toggleAuth()">Daftar</button>
+    <p style="margin-top:14px;font-size:14px">Sudah punya akun? <span style="color:var(--primary);cursor:pointer;font-weight:600" onclick="toggleAuth()">Login</span></p>
+  </div>
+</div>
+
+<div class="container hidden" id="dashboard">
+  <h2 class="section-title">Dashboard</h2>
+  <div class="card">
+    <p>Selamat datang, <b id="user"></b></p>
+    <p style="color:var(--muted)">Silakan pilih kantin untuk memesan makanan</p>
+  </div>
+</div>
+
+<div class="container hidden" id="kantin">
+  <h2 class="section-title">Pilih Kantin</h2>
+  <div class="grid">
+    <div class="card">
+      <img src="./images/KANTIN FISIP.JPG">
+      <h3>Kantin FISIP</h3>
+      <p style="color:var(--muted);font-size:14px">Gedung FISIP</p>
+      <button class="primary" onclick="menu('FISIP')">Lihat Menu</button>
+    </div>
+    <div class="card">
+      <img src="./images/PENDOPO GEDUNG REKTOR.png">
+      <h3>PENDOPO</h3>
+      <p style="color:var(--muted);font-size:14px">Gedung Rektor Samping Perpustakaan</p>
+      <button class="primary" onclick="menu('Pusat')">Lihat Menu</button>
+    </div>
+  </div>
+</div>
+
+<div class="container hidden" id="menu">
+  <h2 class="section-title" id="menuTitle"></h2>
+  <div class="grid" id="menuList"></div>
+</div>
+
+<div class="container hidden" id="keranjang">
+  <h2 class="section-title">Keranjang & Pembayaran</h2>
+  <div class="card" id="keranjangCard">
+    <div id="keranjangList"></div>
+    <hr style="margin:16px 0">
+    <b>Total: <span id="totalHarga">Rp 0</span></b>
+    <hr style="margin:16px 0">
+    <h3>Pilih Metode Pembayaran</h3>
+    <button class="primary" style="margin-top:10px" onclick="bayarQRIS()">QRIS</button>
+    <button class="primary" style="margin-top:10px" onclick="bayarTransfer()">Transfer Bank</button>
+    <button class="primary" style="margin-top:10px" onclick="bayarTempat()">Bayar di Tempat</button>
+  </div>
+</div>
+
+<div class="container hidden" id="riwayat">
+  <h2 class="section-title">Riwayat Transaksi</h2>
+  <div id="riwayatList"></div>
+</div>
+
+<footer>© 2025 Kantin Online UMSU</footer>
+
+<script>
+function toggleAuth(){
+  document.getElementById('loginBox').classList.toggle('hidden');
+  document.getElementById('registerBox').classList.toggle('hidden');
+}
+
+function login(){
+  const loginEl=document.getElementById('login');
+  loginEl.classList.add('hidden');
+  loginEl.style.display='none';
+  document.getElementById('dashboard').classList.remove('hidden');
+  document.getElementById('nav').classList.remove('hidden');
+  document.getElementById('user').innerText=document.getElementById('npm').value||'Mahasiswa';
+}
+
+function show(id){
+  ['dashboard','kantin','menu','keranjang','riwayat'].forEach(s=>{
+    const el=document.getElementById(s);
+    if(el){
+      el.classList.add('hidden');
+      el.style.display='none';
+    }
+  });
+  const active=document.getElementById(id);
+  if(active){
+    active.classList.remove('hidden');
+    active.style.display='block';
+  }
+}
+
+const dataMenu={
+  FISIP:[
+    {nama:'Nasi Goreng',harga:15000,img:'./images/Nasi Goreng.jpg'},
+    {nama:'Es Teh',harga:5000,img:'./images/Es Teh.jpg'}
+  ],
+  Pusat:[
+    {nama:'Kentang Goreng',harga:14000,img:'./images/Kentang Goreng.jpg'},
+    {nama:'Es Cappucino Cincau',harga:6000,img:'./images/Cappuccino Cincau.jpg'}
+  ]
+};
+
+let kantinAktif='';
+let keranjang=[];
+let riwayat=[];
+
+function menu(n){
+  kantinAktif=n;
+  show('menu');
+  document.getElementById('menuTitle').innerText='Menu Kantin '+n;
+  const list=document.getElementById('menuList');
+  list.innerHTML='';
+  dataMenu[n].forEach(item=>{
+    const card=document.createElement('div');
+    card.className='card';
+    card.innerHTML=`<img src="${item.img}"><h4>${item.nama}</h4><p style="color:var(--muted)">Rp ${item.harga.toLocaleString('id-ID')}</p><button class="primary" onclick="pesan('${item.nama}', ${item.harga}, '${item.img}')">Pesan</button>`;
+    list.appendChild(card);
+  });
+}
+
+
+function pesan(nama,harga,img){
+  // reset tampilan keranjang (hapus QR jika ada)
+  document.getElementById('keranjangCard').innerHTML=`<div id="keranjangList"></div>
+    <hr style="margin:16px 0">
+    <b>Total: <span id="totalHarga">Rp 0</span></b>
+    <hr style="margin:16px 0">
+    <h3>Pilih Metode Pembayaran</h3>
+    <button class="primary" style="margin-top:10px" onclick="bayarQRIS()">QRIS</button>
+    <button class="primary" style="margin-top:10px" onclick="bayarTransfer()">Transfer Bank</button>
+    <button class="primary" style="margin-top:10px" onclick="bayarTempat()">Bayar di Tempat</button>`;
+
+  keranjang.push({nama,harga,img});
+  show('keranjang');
+  renderKeranjang();
+}
+
+function renderKeranjang(){
+  const list=document.getElementById('keranjangList');
+  list.innerHTML='';
+  let total=0;
+  keranjang.forEach((i,idx)=>{
+    total+=i.harga;
+    list.innerHTML+=`${idx+1}. ${i.nama} - Rp ${i.harga.toLocaleString('id-ID')}<br>`;
+  });
+  document.getElementById('totalHarga').innerText='Rp '+total.toLocaleString('id-ID');
+}
+
+function bayarQRIS(){
+  const k=document.getElementById('keranjangCard');
+  k.innerHTML=`<h3 style="text-align:center">Scan QRIS</h3>
+  <div style="width:240px;margin:20px auto;text-align:center">
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=QRIS-DEMO-KANTIN-UMSU" style="width:240px;height:240px;border-radius:16px">
+  </div>
+  <button class="primary" onclick="selesaiBayar('QRIS')">Saya sudah bayar</button>`;
+}
+
+function bayarTransfer(){
+  const k=document.getElementById('keranjangCard');
+  k.innerHTML=`<h3>Pilih Bank</h3>
+
+  <div style="display:flex;flex-direction:column;gap:14px">
+
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:#fff;box-shadow:0 6px 16px rgba(0,0,0,.15)">
+        <img src="images/bca.png" style="width:28px;height:28px;object-fit:contain">
+      </div>
+      <div><b>BCA</b><br><span style="font-size:14px">1234567890 a.n Kantin UMSU</span></div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:#fff;box-shadow:0 6px 16px rgba(0,0,0,.15)">
+        <img src="images/mandiri.png" style="width:28px;height:28px;object-fit:contain">
+      </div>
+      <div><b>Mandiri</b><br><span style="font-size:14px">0987654321 a.n Kantin UMSU</span></div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:#fff;box-shadow:0 6px 16px rgba(0,0,0,.15)">
+        <img src="images/bri.png" style="width:28px;height:28px;object-fit:contain">
+      </div>
+      <div><b>BRI</b><br><span style="font-size:14px">1122334455 a.n Kantin UMSU</span></div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:#fff;box-shadow:0 6px 16px rgba(0,0,0,.15)">
+        <img src="images/bni.png" style="width:28px;height:28px;object-fit:contain">
+      </div>
+      <div><b>BNI</b><br><span style="font-size:14px">6677889900 a.n Kantin UMSU</span></div>
+    </div>
+
+  </div>
+
+  <button class="primary" style="margin-top:20px" onclick="selesaiBayar('Transfer Bank')">Saya sudah bayar</button>`;
+}
+
+function bayarTempat(){
+  selesaiBayar('Bayar di Tempat');
+}
+
+function selesaiBayar(metode){
+  const total=keranjang.reduce((a,b)=>a+b.harga,0);
+
+  // cek struk terakhir
+  const last=riwayat[riwayat.length-1];
+
+  if(last && last.kantin===kantinAktif){
+    // gabungkan ke struk yang sama
+    last.items.push(...keranjang);
+    last.total+=total;
+    last.metode=metode;
+    last.waktu=new Date().toLocaleString('id-ID');
+  }else{
+    // buat struk baru
+    riwayat.push({
+      kantin:kantinAktif,
+      items:[...keranjang],
+      metode:metode,
+      total:total,
+      waktu:new Date().toLocaleString('id-ID')
+    });
+  }
+
+  keranjang=[];
+  renderRiwayat();
+  show('riwayat');
+}
+
+function renderRiwayat(){
+  const box=document.getElementById('riwayatList');
+  box.innerHTML='';
+  riwayat.slice().reverse().forEach(r=>{
+    let itemList=r.items.map((i,idx)=>`${idx+1}. ${i.nama}`).join('<br>');
+    box.innerHTML+=`<div class="card" style="margin-bottom:20px">
+      <b>Kantin:</b> ${r.kantin}<br><br>
+      <b>Item Pesanan:</b><br>${itemList}<br><br>
+      <b>Metode:</b> ${r.metode}<br><br>
+      <b>Total:</b> Rp ${r.total.toLocaleString('id-ID')}<br>
+      <span style="color:var(--muted);font-size:13px">${r.waktu}</span>
+    </div>`;
+  });
+}
+
+</script>
+</body>
+</html>
